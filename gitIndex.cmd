@@ -14,25 +14,6 @@ call :config
 call :process.pdb.dir "%pdbDir%"
 goto :End
 
-::[DOS_API:Help]Display help information
-:Help
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
-call tools_miscellaneous.bat DisplayHelp "%~f0"
-goto :eof
-
-::[DOS_API:Test]Test DOS API in this script file
-:Test
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
-echo.
-@echo [%~nx0] Run test case [%0 %*]
-
-echo.
-echo test call :Help
-call :Help
-
-echo.
-goto :eof
-
 :process.pdb.dir
 if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
 set "template_srcsrv=%tempDir%\_template_srcsrv.ini"

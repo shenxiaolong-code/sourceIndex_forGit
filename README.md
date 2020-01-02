@@ -8,6 +8,7 @@ gitIndex.cmd "d:\myProject\newFeature" "d:\myProject\newFeature\output\bin"
 gitIndex.cmd will make source index for all pdb files under path "d:\myProject\newFeature\output\bin" and update those pdb files.
 
 Note:
+
 1.
 if your windbg tool "srctool.exe" is added to %path%, you needn't do anything , else you need to update the file "initEnv.bat"
 below is my windbg x86 path setting:

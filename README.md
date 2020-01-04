@@ -1,4 +1,4 @@
-# source indexing for index
+# source indexing for Git
 source index for git repo. current windbg source index suite doesn't support git repot. here one solution is given by DOS script.
 
 usage : (refer to test/gitIndex_test.bat for example)

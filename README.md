@@ -19,7 +19,7 @@ gitIndex.cmd will make source index for all pdb files under path "d:\myProject\n
    where pdbstr.exe 2>nul || @set "path=C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\srcsrv;%path%"   
    where windbg.exe 2>nul || @set "path=C:\Program Files (x86)\Windows Kits\10\Debuggers\x86;%path%"
 ```
- - you need to repare one local git repo
+ - you need to prepare one local git repo
  ```
    it is used to fetch single repo file with specified commit id. (fetched file dones't overwrite this repo file , see "gitFetchFile.cmd"   for detail.)   
    e.g.  assume your git repo path is "D:\sourceCode\jabberGit129" , you need to set environment varialbe :   

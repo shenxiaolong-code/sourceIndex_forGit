@@ -1,5 +1,6 @@
 @echo off
-::if not defined localGitRepo set localGitRepo=D:\sourceCode\jabberGit129
+::my local git repo setting.
+if {"%USERNAME%"}=={"xiaolosh"} set localGitRepo=D:\sourceCode\jabberGit129
 if not defined localGitRepo (
 echo localGitRepo environment is not defined.
 echo define localGitRepo environment variable point to local git repo.

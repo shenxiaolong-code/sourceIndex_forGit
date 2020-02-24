@@ -75,6 +75,7 @@ echo Fail to source index for "%~nx1"
 goto :eof
 )
 
+set "_tmpSrcsrvSkipped=%tempDir%\%~n1_skipped.txt"
 set "_tmpSrcsrvIni=%tempDir%\%~n1_indexed.ini"
 call :pdb.doSrcIndex.generateSrcsrv "%_tmpRawSrc%"
 if exist "%_tmpSrcsrvIni%"  call :pdb.doSrcIndex.writeBack "%~fs1" "%_tmpSrcsrvIni%"
@@ -106,15 +107,16 @@ if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
 set _tmpGitFilePath=
 for /F "usebackq tokens=*" %%i in ( ` dir/s/b "%~1" ` ) do call set "_tmpGitFilePath=%%i"
 
-set "_tmpFile=%~1"
+call :getCaseSensitiveePath _tmpGitFilePath "%_tmpGitFilePath%"
+
 call :gitTool.gitfileVer "%_tmpGitFilePath%" _tmpFileVer
 if not defined _tmpFileVer (
-rem @echo Fails to get file repo version for "%_tmpFile%", it might be not git version controlled.
+rem @echo Fails to get file repo version for "%~1", it might be not git version controlled.
 goto :eof
 )
-call set _tmpGitFilePath=%%_tmpGitFilePath:%srcRootDir%\=%%
-call set _tmpGitFilePath=%_tmpGitFilePath:\=/%
-call echo %~1*%_tmpFileVer%*%%_tmpGitFilePath:%srcRootDir%\=%%>> "%_tmpSrcsrvIni%"
+call set _tmpGitFileTailPath=%%_tmpGitFilePath:%srcRootDir%\=%%
+call set _tmpGitFileTailPath=%_tmpGitFileTailPath:\=/%
+call echo %_tmpGitFilePath%*%_tmpFileVer%*%_tmpGitFileTailPath%>> "%_tmpSrcsrvIni%"
 goto :eof
 
 :pdb.doSrcIndex.readRawSrc
@@ -126,24 +128,45 @@ goto :eof
 if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
 set %~2=
 for /F "usebackq tokens=*" %%i in ( ` git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%h "%~1" ` ) do call set %~2=%%i
+if not defined %~2 echo [NoGitVer] git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%h "%~1" >> "%_tmpSrcsrvSkipped%"
+goto :eof
+
+:getCaseSensitiveePath
+if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+if not exist "%~fs2" goto :eof
+for /f "usebackq tokens=4" %%i in ( ` fsutil file queryfileid "%~fs2" ` ) do set fileID=%%i
+if defined _Debug echo fileID=%fileID%
+for /f "usebackq tokens=*" %%i in ( ` fsutil file queryFileNameById %~d2 %fileID% ` ) do set "filePath=%%i"
+if defined _Debug echo filePath=%filePath%
+set "%~1=%filePath:*\\?\=%"
 goto :eof
 
 :processInput
 if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
 set "pdbDir=%~2"
 call :verify.path "%pdbDir%"
-set "srcRootDir=%~1"
+call :getCaseSensitiveePath srcRootDir "%~1"
 call :verify.path "%srcRootDir%"
 
-set "tempDir=%~dp0srcIndex"
+if not defined tempDir set "tempDir=%~dp0cache"
 if exist "%tempDir%" rd /s/q "%tempDir%"
 md "%tempDir%"
 call :verify.path "%tempDir%"
 goto :eof
 
+:getCaseSensitiveePath
+if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+if not exist "%~fs2" goto :eof
+for /f "usebackq tokens=4" %%i in ( ` fsutil file queryfileid "%~fs2" ` ) do set fileID=%%i
+if defined _Debug echo fileID=%fileID%
+for /f "usebackq tokens=*" %%i in ( ` fsutil file queryFileNameById %~d2 %fileID% ` ) do set "filePath=%%i"
+if defined _Debug echo filePath=%filePath%
+set "%~1=%filePath:*\\?\=%"
+goto :eof
+
 :config
 if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
-set "sourceIndexTypes=;.h;.hpp;.inl;.c;.cc;.cpp;.cxx;.txt;.res;"
+if not defined sourceIndexTypes set "sourceIndexTypes=;.h;.hpp;.inl;.c;.cc;.cpp;.cxx;.txt;.res;"
 call :config.setPath
 goto :eof
 
@@ -157,10 +180,10 @@ goto :eof
 
 :config.setPath
 if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
-call "%~dp0initEnv.bat"
+call "%~dp0userLocalPathConfig.bat"
 where pdbstr.exe || (
 echo can't find necessary tools path.
-echo please check file "%~dp0initEnv.bat"
+echo please check file "%~dp0userLocalPathConfig.bat"
 exit /b 2
 )
 goto :eof

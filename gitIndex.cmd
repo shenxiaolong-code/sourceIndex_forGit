@@ -2,29 +2,55 @@
 ::Author    : Shen Xiaolong((xlshen@126.com))
 ::Copyright : free use,modify,spread, but MUST include this original two line information(Author and Copyright).
 cls
+rem call gitIndex.cmd "%LocalProjectSrcPath%" "%pdbFilePathOrPdbFolderPath%"
 ::@set EchoEnable=1
-::@set EchoCmd=1
+::@set EchoCmd=%~nx0
 ::@set _Debug=1
 @if {%EchoEnable%}=={1} ( @echo on ) else ( @echo off )
-if {%EchoCmd%}=={1} @echo. & @echo [Enter %~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo. & @echo [Enter %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
 call :processInput  %*
 call :config
-call :process.pdb.dir "%pdbDir%"
+call :process.pdb
 goto :End
 
-:process.pdb.dir
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+::[DOS_API:Help]Display help information
+:Help
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
+call tools_miscellaneous.bat DisplayHelp "%~f0"
+goto :eof
+
+::[DOS_API:Test]Test DOS API in this script file
+:Test
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
+echo.
+@echo [%~nx0] Run test case [%0 %*]
+
+echo.
+echo test call :Help
+call :Help
+
+echo.
+goto :eof
+
+:process.pdb
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 set "template_srcsrv=%tempDir%\_template_srcsrv.ini"
 call :process.pdb.initSrcsrvIni "%template_srcsrv%"
+if defined pdbDir   call :process.pdb.dir "%pdbDir%"
+if defined pdbFile  call :process.pdb.one "%pdbFile%"
+goto :eof
+
+:process.pdb.dir
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 set "PdbList=%tempDir%\_pdbFileList.txt"
-dir/s/b "%pdbDir%\*.pdb" > "%PdbList%"
-for /f  "usebackq tokens=*" %%i in ( ` type "%PdbList%"  ` ) do call :process.pdb.one "%%i"
+dir/s/b "%~1\*.pdb" > "%PdbList%"
+for /f  "usebackq tokens=*" %%i in ( ` type "%PdbList%"  ` ) do call :process.pdb.one "%%~i"
 goto :eof
 
 :process.pdb.initSrcsrvIni
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 :: j:\bld_12.6\thirdparty\external\boost_1_56_0\boost\bind\bind.hpp*commitID*/thirdparty/external/boost_1_56_0/boost/bind/bind.hpp
 if exist "%~f1" del /f/q "%~f1"
 (
@@ -44,19 +70,19 @@ rem @echo GIT_EXTRACT_CMD=cmd.exe /c if not exist "%%GIT_EXTRACT_TARGET%%\.." md
 goto :eof
 
 :process.pdb.one
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 call :pdb.needSrcIndex "%~fs1" _bNeedNextAction
 if defined _bNeedNextAction call :pdb.doSrcIndex "%~fs1"
 goto :eof
 
 :pdb.needSrcIndex
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 call :pdb.needSrcIndex.bySrcNum %*
 if not defined %~2 goto :eof
 goto :eof
 
 :pdb.needSrcIndex.bySrcNum
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 call set %~2=
 set _tmpSrcNum=
 for /f "usebackq tokens=1" %%i in ( ` srctool.exe  "%~fs1" -r -u ^| find /i "%srcRootDir%" /c ` ) do set _tmpSrcNum=%%i
@@ -65,8 +91,8 @@ goto :eof
 
 
 :pdb.doSrcIndex
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
-echo [%time%] source index for "%~1" ....
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
+echo [%time%] Git source index for "%~1" ....
 set "_tmpRawSrc=%tempDir%\%~n1_raw.txt"
 call :pdb.doSrcIndex.readRawSrc "%~fs1" "%_tmpRawSrc%"
 
@@ -79,30 +105,30 @@ set "_tmpSrcsrvSkipped=%tempDir%\%~n1_skipped.txt"
 set "_tmpSrcsrvIni=%tempDir%\%~n1_indexed.ini"
 call :pdb.doSrcIndex.generateSrcsrv "%_tmpRawSrc%"
 if exist "%_tmpSrcsrvIni%"  call :pdb.doSrcIndex.writeBack "%~fs1" "%_tmpSrcsrvIni%"
-echo [%time%] Done to source index for "%~1"
+echo  [%time%] Done to Git source index for "%~1"
 echo.
 goto :eof
 
 :pdb.doSrcIndex.writeBack
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 pdbstr.exe -w -p:"%~fs1" -i:"%~fs2" -s:srcsrv
 goto :eof
 
 :pdb.doSrcIndex.generateSrcsrv
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 copy /a/y "%template_srcsrv%" "%_tmpSrcsrvIni%" 1>nul
 for /F "usebackq tokens=*" %%i in ( ` type  "%~fs1" ` ) do call :pdb.doSrcIndex.generateSrcsrv.oneLine "%%i"
 @echo SRCSRV: end ------------------------------------------------ >> "%_tmpSrcsrvIni%"
 goto :eof
 
 :pdb.doSrcIndex.generateSrcsrv.oneLine
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 call set "_tmpTypeList=%%sourceIndexTypes:;%~x1;=%%"
 if not {"%_tmpTypeList%"}=={"%sourceIndexTypes%"} call :pdb.doSrcIndex.generateSrcsrv.oneFile %*
 goto :eof
 
 :pdb.doSrcIndex.generateSrcsrv.oneFile
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 :: j:\bld_12.6\thirdparty\external\boost_1_56_0\boost\bind\bind.hpp*commitID*/thirdparty/external/boost_1_56_0/boost/bind/bind.hpp
 set _tmpGitFilePath=
 for /F "usebackq tokens=*" %%i in ( ` dir/s/b "%~1" ` ) do call set "_tmpGitFilePath=%%i"
@@ -120,19 +146,19 @@ call echo %_tmpGitFilePath%*%_tmpFileVer%*%_tmpGitFileTailPath%>> "%_tmpSrcsrvIn
 goto :eof
 
 :pdb.doSrcIndex.readRawSrc
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 srctool.exe  "%~fs1" -r -u | find /i "%srcRootDir%" > "%~fs2"
 goto :eof
 
 :gitTool.gitfileVer
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 set %~2=
 for /F "usebackq tokens=*" %%i in ( ` git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%h "%~1" ` ) do call set %~2=%%i
 if not defined %~2 echo [NoGitVer] git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%h "%~1" >> "%_tmpSrcsrvSkipped%"
 goto :eof
 
 :getCaseSensitiveePath
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 if not exist "%~fs2" goto :eof
 for /f "usebackq tokens=4" %%i in ( ` fsutil file queryfileid "%~fs2" ` ) do set fileID=%%i
 if defined _Debug echo fileID=%fileID%
@@ -142,9 +168,11 @@ set "%~1=%filePath:*\\?\=%"
 goto :eof
 
 :processInput
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
-set "pdbDir=%~2"
-call :verify.path "%pdbDir%"
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
+call :verify.path "%~2"
+set "_tmpAttrib=%~a2"
+if      {"%_tmpAttrib:~0,1%"}=={"d"}    set "pdbDir=%~2"    & set pdbFile=
+if not  {"%_tmpAttrib:~0,1%"}=={"d"}    set "pdbFile=%~2"   & set pdbDir=
 call :getCaseSensitiveePath srcRootDir "%~1"
 call :verify.path "%srcRootDir%"
 
@@ -155,7 +183,7 @@ call :verify.path "%tempDir%"
 goto :eof
 
 :getCaseSensitiveePath
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 if not exist "%~fs2" goto :eof
 for /f "usebackq tokens=4" %%i in ( ` fsutil file queryfileid "%~fs2" ` ) do set fileID=%%i
 if defined _Debug echo fileID=%fileID%
@@ -165,13 +193,13 @@ set "%~1=%filePath:*\\?\=%"
 goto :eof
 
 :config
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 if not defined sourceIndexTypes set "sourceIndexTypes=;.h;.hpp;.inl;.c;.cc;.cpp;.cxx;.txt;.res;"
 call :config.setPath
 goto :eof
 
 :verify.path
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 if not exist "%~1" (
 @echo can't find "%~1"
 exit 
@@ -179,9 +207,9 @@ exit
 goto :eof
 
 :config.setPath
-if {%EchoCmd%}=={1} @echo [%~nx0] commandLine: %0 %*
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 call "%~dp0userLocalPathConfig.bat"
-where pdbstr.exe || (
+where pdbstr.exe 1>nul 2>nul || (
 echo can't find necessary tools path.
 echo please check file "%~dp0userLocalPathConfig.bat"
 exit /b 2
@@ -189,4 +217,4 @@ exit /b 2
 goto :eof
 
 :End
-if {%EchoCmd%}=={1} @echo [Leave %~nx0] commandLine: %0 %* & @echo.
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [Leave %~nx0] commandLine: %0 %* & @echo.

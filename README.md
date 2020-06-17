@@ -1,6 +1,6 @@
 # SourceIndex_forGit
 source index for git repo.  
-current windbg source index suite doesn't support git repot. here one solution is given by DOS script.
+current windbg source index suite doesn't support git repo. here one solution is given by DOS script.
 
 # Usage :  
 Syntax:  

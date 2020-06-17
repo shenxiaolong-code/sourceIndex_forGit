@@ -1,5 +1,5 @@
 ::source index for git repo -- xlshen@126.com
-::Author    : Shen Xiaolong((xlshen@126.com))
+::Author    : Shen Xiaolong(xlshen2002@hotmail.com,xlshen@126.com)
 ::Copyright : free use,modify,spread, but MUST include this original two line information(Author and Copyright).
 cls
 rem call gitIndex.cmd "%LocalProjectSrcPath%" "%pdbFilePathOrPdbFolderPath%"
@@ -153,8 +153,8 @@ goto :eof
 :gitTool.gitfileVer
 @for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
 set %~2=
-for /F "usebackq tokens=*" %%i in ( ` git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%h "%~1" ` ) do call set %~2=%%i
-if not defined %~2 echo [NoGitVer] git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%h "%~1" >> "%_tmpSrcsrvSkipped%"
+for /F "usebackq tokens=*" %%i in ( ` git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%H "%~1" ` ) do call set %~2=%%i
+if not defined %~2 echo [NoGitVer] git.exe -C "%srcRootDir%" log -1 --pretty^=format:%%H "%~1" >> "%_tmpSrcsrvSkipped%"
 goto :eof
 
 :getCaseSensitiveePath

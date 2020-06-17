@@ -1,3 +1,6 @@
+::source index for git repo -- xlshen@126.com
+::Author    : Shen Xiaolong(xlshen2002@hotmail.com,xlshen@126.com)
+::Copyright : free use,modify,spread, but MUST include this original two line information(Author and Copyright).
 
 rem usage:
 rem configure Proecjt : properties -> Configuration Properties -> Build Events -> Post-Build Event : Command Line

@@ -1,3 +1,7 @@
+::source index for git repo -- xlshen@126.com
+::Author    : Shen Xiaolong(xlshen2002@hotmail.com,xlshen@126.com)
+::Copyright : free use,modify,spread, but MUST include this original two line information(Author and Copyright).
+
 @echo off
 ::my local git repo setting.
 if {"%USERNAME%"}=={"xiaolosh"} set localGitRepo=D:\sourceCode\jabberGit129

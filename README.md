@@ -28,4 +28,6 @@ this variable is used in "gitFetchFile.cmd" , certain you can edit "gitFetchFile
 you need to put gitFetchFile.cmd path in %path%, or copy it into system directory (e.g. C:\windows\system32).  
 debugger will seek it to download specified file with specified commit ID. (those info comes from source index)
 
-
+# additional:  
+- index slower , debug faster -- use : https://github.com/ShenXiaolong1976/sourceIndex_forGit
+- index faster , debug slower -- use : https://github.com/ShenXiaolong1976/sourceIndexLight_forGit

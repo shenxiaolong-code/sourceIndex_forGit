@@ -3,13 +3,13 @@ source index for git repo.
 current windbg source index suite doesn't support git repo. here one solution is given by DOS script.
 
 # Usage :  
-Syntax:  
-gitIndex.cmd \<sourceCodeDir\> \<pdbFilesDirPath\>  
-.E.g  
-gitIndex.cmd "d:\myProject\newFeature" "d:\myProject\newFeature\output\bin"  
-gitIndex.cmd will make source index for all pdb files under path "d:\myProject\newFeature\output\bin" and update those pdb files.  
+- Syntax:  
+  gitIndex.cmd \<sourceCodeDir\> \<pdbFilesDirPath\>  
+- example  
+  gitIndex.cmd "d:\myProject\newFeature" "d:\myProject\newFeature\output\bin"  
+  gitIndex.cmd will make source index for all pdb files under path "d:\myProject\newFeature\output\bin" and update those pdb files.  
 
-you can refer to example in path :test/gitIndex_test.bat  
+- you can refer to example in path : ./test/gitIndex_test.bat  
 
 # Note:  
  - config windbg tool path  

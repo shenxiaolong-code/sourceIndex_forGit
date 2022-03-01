@@ -10,7 +10,8 @@ Chinese introduce : https://bbs.pediy.com/thread-263043.htm
   gitIndex.cmd "d:\myProject\newFeature" "d:\myProject\newFeature\output\bin"  
   gitIndex.cmd will make source index for all pdb files under path "d:\myProject\newFeature\output\bin" and update those pdb files.  
 
-- you can refer to the example in the path: ./test/gitIndex_test.bat  
+- you can refer to the example in the path:  
+  https://github.com/shenxiaolong-code/sourceIndex_forGit/blob/master/test/test_pdbDirAll.bat
 
 # Note:  
  - config windbg tool path  

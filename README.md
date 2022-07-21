@@ -23,7 +23,7 @@ where windbg.exe 2>nul || @set "path=C:\Program Files (x86)\Windows Kits\10\Debu
 - you need to prepare one local git repo  
 it is used to fetch a single repo file with a specified commit id. (fetched file doesn't overwrite this repo file, see "gitFetchFile.cmd" for detail.)  
 e.g.  assume your git repo path is "D:\sourceCode\jabberGit129" , you need to set environment varialbe :  
-set "localGitRepo=D:\sourceCode\jabberGit129"  
+setx  localGitRepo "D:\sourceCode\jabberGit129"  
 this variable is used in "gitFetchFile.cmd" , certain you can edit "gitFetchFile.cmd" directly without puting it into system environments.
 
 - add gitFetchFile.cmd to system search path.  
